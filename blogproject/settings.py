@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "replace-this-with-a-secure-secret-for-prod"
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost","pypostblog.onrender.com"]
 
 INSTALLED_APPS = [
     "widget_tweaks",
