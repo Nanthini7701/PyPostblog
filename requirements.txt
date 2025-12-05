@@ -1,0 +1,6 @@
+Django>=4.2
+djangorestframework>=3.14
+whitenoise
+gunicorn
+django-widget-tweaks
+pillow

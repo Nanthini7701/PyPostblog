@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}{{ post.title }} — PyPost{% endblock %}
+
+{% block content %}
+<div class="post">
+  {% if post.image %}
+    <img src="{{ post.image.url }}" alt="{{ post.title }}"
+         style="width:100%;max-height:380px;object-fit:cover;border-radius:12px;">
+  {% endif %}
+
+  <h1 class="mt-3 page-title">{{ post.title }}</h1>
+  <p class="meta">
+    By {{ post.author.username }} · {{ post.created_at|date:"F j, Y" }}
+  </p>
+
+  <div class="d-flex align-items-center mb-3 gap-2">
+    {% if user.is_authenticated %}
+      <form method="post"
+            action="{% url 'blog:post_like' post.slug %}"
+            class="inline-like d-inline">
+        {% csrf_token %}
+        <button class="btn like-btn">
+          ❤ <span class="like-count">{{ post.total_likes }}</span>
+        </button>
+      </form>
+    {% else %}
+      <span class="text-muted small">
+        ❤ <span>{{ post.total_likes }}</span> — <a href="{% url 'login' %}">Login to like</a>
+      </span>
+    {% endif %}
+
+    {% if user == post.author %}
+      <a href="{% url 'blog:post_edit' post.slug %}" class="btn btn-sm ms-2">Edit</a>
+      <a href="{% url 'blog:post_delete' post.slug %}" class="btn btn-sm danger ms-1">Delete</a>
+    {% endif %}
+  </div>
+
+  <div class="post-body">
+    {{ post.body|linebreaks }}
+  </div>
+</div>
+
+<section class="comments mt-4">
+  <h4>Comments ({{ post.comments.count }})</h4>
+
+  {% for c in post.comments.all %}
+    <div class="comment">
+      <div class="small meta">
+        <strong>{{ c.user.username }}</strong> · {{ c.created_at|date:"M j, Y H:i" }}
+      </div>
+      <p class="mb-0">{{ c.text|linebreaks }}</p>
+    </div>
+  {% empty %}
+    <p class="text-muted">No comments yet.</p>
+  {% endfor %}
+
+  {% if user.is_authenticated %}
+    <form method="post" class="mt-3">
+      {% csrf_token %}
+      {{ comment_form.as_p }}
+      <button class="btn">Add comment</button>
+    </form>
+  {% else %}
+    <p class="text-muted mt-3">
+      <a href="{% url 'login' %}">Login</a> to add a comment.
+    </p>
+  {% endif %}
+</section>
+{% endblock %}

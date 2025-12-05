@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home — PyPost{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+
+  <!-- MAIN COLUMN -->
+  <div class="col-lg-8">
+
+    <!-- 🌟 HERO SECTION -->
+    <div class="card hero-card text-white overflow-hidden mb-4"
+         style="border-radius:20px;background:rgba(255,255,255,0.04);backdrop-filter:blur(10px);box-shadow:0 0 30px rgba(0,255,255,0.15);">
+
+      <img src="{% static 'images/hero.jpeg' %}" 
+        class="card-img hero-img" 
+        alt="Hero image" 
+        style="height:320px;object-fit:cover;opacity:0.45;">
+
+      <div class="card-img-overlay text-center d-flex flex-column justify-content-center">
+        <h1 class="fw-bold display-4" style="text-shadow:0px 0px 15px #00f5d4;">
+          Share Your Ideas With The World
+        </h1>
+        <p class="lead" style="opacity:0.9;">
+          A community for creativity — learn, write and explore meaningful topics.
+        </p>
+        <a href="{% url 'blog:post_create' %}" 
+           class="btn btn-lg"
+           style="background:linear-gradient(90deg,#8b5cf6,#ff5f86);border:none;color:white;font-weight:600;box-shadow:0 0 10px #ff5f86;">
+          ✨ Create a Post
+        </a>
+      </div>
+    </div>
+
+    <!-- 📝 LATEST POSTS -->
+    <h3 class="mb-3 text-light fw-bold" style="text-shadow:0 0 10px #00f5d4;">Latest Posts</h3>
+
+    <div class="row g-4">
+      {% for post in posts %}
+      <article class="col-md-6">
+        <div class="card h-100"
+             style="border-radius:14px;background:rgba(255,255,255,0.05);
+                    border:1px solid rgba(255,255,255,0.1);
+                    box-shadow:0 8px 30px rgba(0,0,0,0.4);
+                    transition:0.35s ease;">
+          
+          <div style="overflow:hidden;">
+            {% if post.image %}
+              <img src="{{ post.image.url }}" style="height:190px;object-fit:cover;width:100%;transition:.4s;" 
+                onmouseover="this.style.transform='scale(1.05)'"
+                onmouseout="this.style.transform='scale(1)'">
+            {% else %}
+              <div class="d-flex align-items-center justify-content-center"
+                style="height:190px;background:rgba(255,255,255,0.07);">
+                <span class="text-muted">No Image</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="card-body d-flex flex-column text-light">
+            <h5 class="fw-bold">
+              <a href="{% url 'blog:post_detail' slug=post.slug %}" 
+                 class="text-decoration-none text-light stretched-link"
+                 style="text-shadow:0 0 6px #8b5cf6;">
+                {{ post.title }}
+              </a>
+            </h5>
+
+            <p class="small text-muted">
+              By {{ post.author.username }} · {{ post.created_at|date:"F j, Y" }}
+            </p>
+
+            <p class="small" style="opacity:0.8;">{{ post.body|truncatechars:150 }}</p>
+
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              <span class="text-muted small">💬 {{ post.comments.count }} comments</span>
+              <a href="{% url 'blog:post_detail' slug=post.slug %}" 
+                 class="btn btn-sm"
+                 style="color:#00f5d4;border-color:#00f5d4;">
+                Read →
+              </a>
+            </div>
+          </div>
+        </div>
+      </article>
+      {% empty %}
+      <div class="col-12 text-center text-light">
+        <p>No posts yet — <a href="{% url 'blog:post_create' %}" class="text-warning fw-bold">Create one!</a></p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="col-lg-4">
+
+    <div class="card sticky-top mb-3"
+         style="top:20px;background:rgba(255,255,255,0.05);
+                backdrop-filter:blur(10px);
+                border:1px solid rgba(255,255,255,0.1);
+                border-radius:14px;">
+      <div class="card-body">
+        <h5 class="text-light fw-bold" style="text-shadow:0 0 6px #ff5f86;">🔥 Trending</h5>
+        <ul class="list-unstyled mt-3">
+          {% for t in trending %}
+          <li class="mb-3 text-light">
+            <a href="{% url 'blog:post_detail' slug=t.slug %}"
+               class="fw-semibold text-light"
+               style="text-decoration:none;">
+               • {{ t.title }}
+            </a>
+            <div class="small text-light">{{ t.created_at|date:"M j, Y" }} · ❤️ {{ t.likes.count }}</div>
+          </li>
+          {% empty %}
+          <li class="text-light">No trending posts yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="card"
+         style="background:rgba(255,255,255,0.05);border-radius:14px;border:1px solid rgba(255,255,255,0.07);">
+      <div class="card-body">
+        <h6 class="text-light fw-bold">📌 About PyPost</h6>
+        <p class="small text-light">A modern blogging platform where ideas meet creativity.</p>
+      </div>
+    </div>
+  </aside>
+</div>
+{% endblock %}
